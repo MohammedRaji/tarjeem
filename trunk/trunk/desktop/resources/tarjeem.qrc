@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>run.png</file>
+        <file>pause.png</file>
+        <file>restart.png</file>
+        <file>stop.png</file>
+        <file>open.png</file>
+        <file>country_id.png</file>
+        <file>country_us.png</file>
+        <file>country_jp.png</file>
+        <file>open_url.png</file>
+    </qresource>
+</RCC>
