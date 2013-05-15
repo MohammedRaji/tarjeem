@@ -1,0 +1,17 @@
+Tambahan:
+============================================
+.htaccess
+netbeans_autocomplete_codeigniter.php
+/libraries
+--/Bcrypt.php
+--/Login.php
+--/Login_manager.php
+/core
+--/MY_Controller
+--/MY_Model
+
+Edited
+============================================
+/config
+--/config.php
+--/database.php
