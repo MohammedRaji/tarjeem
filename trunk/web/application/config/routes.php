@@ -41,9 +41,7 @@
 $route['default_controller'] = "homes";
 $route['404_override'] = '';
 
-$route['about'] = "homes/about";
-
-$route['login'] = "logins/login";
+$route['login']  = "logins/login";
 $route['logout'] = "logins/logout";
 $route['signup'] = "logins/signup";
 
