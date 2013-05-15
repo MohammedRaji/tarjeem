@@ -26,13 +26,6 @@ class Homes extends MY_Controller {
         $data['content'] = 'home/signup';
         $data['login'] = $this->set_login_status();
         $this->load->view($this->layout, $data);
-    }    
-
-    public function about() {
-        $data['title'] = "About";
-        $data['content'] = 'home/about';
-        $data['login'] = $this->set_login_status();
-        $this->load->view($this->layout, $data);
-    }    
+    }
     
 }
