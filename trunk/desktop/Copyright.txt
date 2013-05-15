@@ -1,0 +1,15 @@
+Tarjeem is Shamela's book translation software. You are free to install and use it, but no redistributed it. The software is free it use without any guarantee. 
+
+Copyright (c) 2013 Tarjeem (tarjeem.com)
+
+Tarjeem team:
+- Yan Syafri Hidayat
+- Lutfi Aziz Firdaus
+- Riza Zakariya
+
+Version Logs
+-------------------------------------
+
+v.0.1.1
+Features
+- Convet .bok to .txt
