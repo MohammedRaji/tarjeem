@@ -7,6 +7,7 @@
 #include <QHeaderView>
 #include <QToolBar>
 #include <QTextCodec>
+#include <QStatusBar>
 #include <QDebug>
 
 #include "tarjeem.h"
@@ -14,6 +15,7 @@
 Tarjeem::Tarjeem()
 {
     createMenu();
+    createStatusBar();
     activateMenu(false);
 
     listMain << "BkId" << "Bk" << "Betaka" << "Inf" << "Auth" << "AuthInf" << "TafseerNam" << "IslamShort"
@@ -21,6 +23,8 @@ Tarjeem::Tarjeem()
              << "verName" << "cat" << "Lng" << "HigriD" << "AD" << "aSeal" << "bLnk" << "PdfCs" << "ShrtCs";
 
     listContent << "tit" << "lvl" << "sub" << "id";
+
+    readingStatus = IS_NOT_READING;
 
     this->setWindowTitle("Tarjeem Desktop");
 }
@@ -66,6 +70,19 @@ void Tarjeem::createMenu()
     translateToolbar->addAction(translateMenu->actions().at(4));
 }
 
+void Tarjeem::createStatusBar()
+{
+    status = new QLabel("Ready", this);
+    status->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    progressBar = new QProgressBar(this);
+    progressBar->setInvertedAppearance(true);
+    progressBar->setVisible(true);
+    //    progressBar->hide();
+
+    statusBar()->addWidget(status, 0);
+    statusBar()->addWidget(progressBar, 1);
+}
+
 void Tarjeem::activateMenu(bool opt)
 {
     translateMenu->actions().at(0)->setEnabled(opt);
@@ -93,7 +110,7 @@ void Tarjeem::openBook()
 void Tarjeem::openHelp()
 {
     QMessageBox msgBox;
-    msgBox.setText("Tarjeem v0.1.0 \nShamela's Book Translation Software");
+    msgBox.setText("Tarjeem Desktop \nShamela's Book Translation Software");
     msgBox.setInformativeText("Copyright 2013 Tarjeem.com \n For more information contact us (yansyaf@gmail.com)");
     msgBox.setIcon(QMessageBox::Information);
     msgBox.exec();
@@ -223,6 +240,8 @@ void Tarjeem::onOpenBook()
 
 void Tarjeem::onItemClicked(QTreeWidgetItem* item)
 {
+    disconnect(tableOfContent, SIGNAL(itemClicked(QTreeWidgetItem*,int)), 0, 0);
+
     QString filePath = "DRIVER={Driver do Microsoft Access (*.mdb)};FIL={CONN_NAME};DBQ=";
     filePath.append(currentBookFile);
 
@@ -236,16 +255,30 @@ void Tarjeem::onItemClicked(QTreeWidgetItem* item)
     else {
         QSqlQuery query(db); // get data from .mdb file
 
+        //get size
+        query.exec(QString("SELECT nass FROM b%1;").arg(mainInfo->item(0,2)->text()));
+        int size = 0;
+        while(query.next())
+        {
+            size++;
+        }
+        progressBar->setRange(0,size-1); //set impossible value
+
         //content
         query.exec(QString("SELECT nass FROM b%1;").arg(mainInfo->item(0,2)->text()));
 
-        contentText->clear();
+        int i=0;
         while(query.next())
         {
             contentText->append(query.value(0).toString());
+            progressBar->setValue(i);
+            i++;
         }
+        progressBar->setValue(0);
     }
     db.close();
+
+    connect(tableOfContent, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onItemClicked(QTreeWidgetItem*)) );
 }
 
 //QTreeWidgetItem* diggIn(QTreeWidgetItem* current, int level)

@@ -1,14 +1,20 @@
 ##############
 ## PROJECT SETTING 
 #####################################################
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.9)
 
 IF(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
 
 PROJECT("Tarjeem")
-FIND_PACKAGE(Qt4 COMPONENTS QtCore QtGui QtSql REQUIRED)
+
+SET(CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.0.2\\5.0.2\\msvc2010\\")
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+SET(CMAKE_AUTOMOC ON)
+
+FIND_PACKAGE(Qt5Widgets)
+
 SET(CMAKE_BUILD_TYPE Release)
 
 ###############################################
@@ -35,31 +41,25 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
 #####################################################
 ## CPP COMPILER
 #####################################################
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS})
 
-ADD_DEFINITIONS(${QT_DEFINITIONS})
-ADD_DEFINITIONS(${QWT_DLL})
+ADD_DEFINITIONS(${Qt5Widgets_DEFINITIONS})
+ADD_DEFINITIONS(-DQT_PLUGIN)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 SET(MAIN_UI_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/tarjeem.cpp
 )
 
-SET(MAIN_UI_RC
-	${CMAKE_CURRENT_SOURCE_DIR}/resources/tarjeem.qrc
-)
-
 SET(MAIN_UI_MOC_HDRS 
 	${CMAKE_CURRENT_SOURCE_DIR}/tarjeem.h
 )
 
-INCLUDE(${QT_USE_FILE})
+SET(MAIN_UI_RC ${CMAKE_CURRENT_SOURCE_DIR}/resources/tarjeem.qrc)
 
-QT4_ADD_RESOURCES(MAIN_UI_RC_SRCS ${MAIN_UI_RC})
-QT4_WRAP_CPP(MAIN_UI_MOC_SRCS ${MAIN_UI_MOC_HDRS} )
+QT5_ADD_RESOURCES(MAIN_UI_RC_SRCS ${MAIN_UI_RC})
 
-IF(WIN32)
 SET(WIN_RESOURCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/tarjeem.rc)
 ADD_EXECUTABLE(
 	${PROJECT_NAME} 
@@ -68,20 +68,8 @@ ADD_EXECUTABLE(
 	${MAIN_UI_RC_SRCS}
 	${MAIN_UI_MOC_SRCS}
 	${WIN_RESOURCE_FILE})
-ELSE()
-ADD_EXECUTABLE(
-	${PROJECT_NAME} 
-	${MAIN_UI_SOURCES}
-	${MAIN_UI_RC_SRCS}
-	${MAIN_UI_MOC_SRCS})
-ENDIF(WIN32)
 
-TARGET_LINK_LIBRARIES(
-	${PROJECT_NAME} 
-	${QT_LIBRARIES}
-	${QT_QTMAIN_LIBRARY}
-)
-	
+QT5_USE_MODULES(${PROJECT_NAME} Widgets Sql)	
 SET_PROPERTY(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE_DEBUG 0)
 
 #####################################################
@@ -113,41 +101,27 @@ ENDIF(WIN32 AND NOT UNIX)
 
 INCLUDE(InstallRequiredSystemLibraries)
 
-IF(UNIX AND NOT APPLE)
-    INSTALL(TARGETS ${PROJECT_NAME}
-        DESTINATION bin
-    )
-
-    FOREACH(LIB QtCore QtXml QtTest QtWebKit QtGui QtNetwork QtScript)
-        INSTALL(FILES
-            "${QT_LIBRARY_DIR}/lib${LIB}.so.${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}" 
-            RENAME "lib${LIB}.so.${QT_VERSION_MAJOR}" 
-            DESTINATION bin
-        )
-    ENDFOREACH(LIB)
-ENDIF(UNIX AND NOT APPLE)
-
 IF(WIN32)
     INSTALL(TARGETS ${PROJECT_NAME}
         DESTINATION bin
     )
-
+	
+	##THIS IS CURRENTLY HARD CODED
     INSTALL(FILES
-        "${QT_BINARY_DIR}/QtCore${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtSql${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtXml${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtTest${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtWebKit${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtGui${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtNetwork${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtScript${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtSvg${QT_VERSION_MAJOR}.dll" 
+        "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/Qt5Core.dll" 
+        "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/Qt5Widgets.dll" 
+        "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/Qt5Sql.dll" 
         DESTINATION bin
     )
 	
     INSTALL(FILES
-        "${PROJECT_SOURCE_DIR}/plugins/sqldrivers/qsqlodbc${QT_VERSION_MAJOR}.dll" 
+        "${PROJECT_SOURCE_DIR}/plugins/sqldrivers/qsqlodbc.dll" 
 		DESTINATION bin/plugins/sqldrivers
+	)
+
+    INSTALL(FILES
+        "${PROJECT_SOURCE_DIR}/books/example.bok" 
+		DESTINATION bin/books
 	)
 	
 ENDIF(WIN32)

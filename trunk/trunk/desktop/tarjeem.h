@@ -10,6 +10,8 @@
 #include <QTableWidget>
 #include <QTreeWidgetItem>
 #include <QComboBox>
+#include <QLabel>
+#include <QProgressBar>
 #include <QMenu>
 
 class Tarjeem : public QMainWindow
@@ -29,6 +31,7 @@ public slots:
 
 private:
     void createMenu();
+    void createStatusBar();
     void activateMenu(bool opt);
 //    QTreeWidgetItem* diggIn(QTreeWidgetItem* current, int level);
 //    QTreeWidgetItem* diggUp(QTreeWidgetItem* current, int level);
@@ -48,6 +51,11 @@ private:
     QTreeWidget  *tableOfContent;
     QTextEdit    *contentText;
     QComboBox    *language;
+
+    QLabel *status;
+    QProgressBar *progressBar;
+
+    enum {IS_READING, IS_NOT_READING} readingStatus;
 };
 
 #endif

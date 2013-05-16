@@ -3,6 +3,8 @@
 
 #include "tarjeem.h"
 
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
