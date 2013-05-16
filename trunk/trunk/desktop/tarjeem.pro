@@ -1,4 +1,4 @@
-QT       += core gui sql network
+QT       += widgets core gui sql network
 
 TARGET = Tarjeem
 TEMPLATE = app

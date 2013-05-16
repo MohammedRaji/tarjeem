@@ -25,10 +25,13 @@ public slots:
     void openHelp();
     void onOpenBook();
     void onItemClicked(QTreeWidgetItem* item);
+//    void showContent();
 
 private:
     void createMenu();
     void activateMenu(bool opt);
+//    QTreeWidgetItem* diggIn(QTreeWidgetItem* current, int level);
+//    QTreeWidgetItem* diggUp(QTreeWidgetItem* current, int level);
 
     QMenu *fileMenu;
     QMenu *translateMenu;
