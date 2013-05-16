@@ -6,6 +6,7 @@
 #include <QTextBlock>
 #include <QHeaderView>
 #include <QToolBar>
+#include <QTextCodec>
 #include <QDebug>
 
 #include "tarjeem.h"
@@ -15,41 +16,13 @@ Tarjeem::Tarjeem()
     createMenu();
     activateMenu(false);
 
-    listMain.append("BkId");
-    listMain.append("Bk");
-    listMain.append("Betaka");
-    listMain.append("Inf");
-    listMain.append("Auth");
-    listMain.append("AuthInf");
-    listMain.append("TafseerNam");
-    listMain.append("IslamShort");
-    listMain.append("oNum");
-    listMain.append("oVer");
-    listMain.append("seal");
-    listMain.append("oAuth");
-    listMain.append("bVer");
-    listMain.append("oAuth");
-    listMain.append("bVer");
-    listMain.append("Pdf");
-    listMain.append("oAuthVer");
-    listMain.append("verName");
-    listMain.append("cat");
-    listMain.append("Lng");
-    listMain.append("HigriD");
-    listMain.append("AD");
-    listMain.append("aSeal");
-    listMain.append("bLnk");
-    listMain.append("PdfCs");
-    listMain.append("ShrtCs");
+    listMain << "BkId" << "Bk" << "Betaka" << "Inf" << "Auth" << "AuthInf" << "TafseerNam" << "IslamShort"
+             << "oNum" << "oVer" << "seal" << "oAuth" << "bVer" << "oAuth" << "bVer" << "Pdf" << "oAuthVer"
+             << "verName" << "cat" << "Lng" << "HigriD" << "AD" << "aSeal" << "bLnk" << "PdfCs" << "ShrtCs";
 
-    //    QString listMain = "BkId, Bk, Betaka, Inf, Auth, AuthInf, TafseerNam, IslamShort, oNum, oVer, seal, oAuth, bVer, oAuth, bVer, Pdf, oAuthVer, verName, cat, Lng, HigriD, AD, aSeal, bLnk, PdfCs, ShrtCs";
+    listContent << "tit" << "lvl" << "sub" << "id";
 
-    listContent.append("tit");
-    listContent.append("lvl");
-    listContent.append("sub");
-    listContent.append("id");
-
-    this->setWindowTitle("Tarjeem Desktop v0.1");
+    this->setWindowTitle("Tarjeem Desktop");
 }
 
 Tarjeem::~Tarjeem()
@@ -77,9 +50,9 @@ void Tarjeem::createMenu()
     helpMenu->addAction("About", this, SLOT(openHelp()));
 
     language = new QComboBox(this);
-    language->addItem(QIcon("://country_id.png"), "Indonesia", 0);
-    language->addItem(QIcon("://country_jp.png"), "Japan", 0);
-    language->addItem(QIcon("://country_us.png"), "United States", 0);
+    language->addItem(QIcon("://country_id.png"), "Bahasa Indonesia", 0);
+    language->addItem(QIcon("://country_jp.png"), "Japanese", 0);
+    language->addItem(QIcon("://country_us.png"), "English (US)", 0);
 
     QToolBar *fileToolbar = addToolBar("File");
     fileToolbar->addAction(fileMenu->actions().at(0));
@@ -105,9 +78,8 @@ void Tarjeem::openBook()
 {
     currentBookFile = QFileDialog::getOpenFileName(this, tr("Buka File Buku"), "", tr("Shamela Book (*.bok)"));
 
-    this->setWindowTitle(QString("Tarjeem Desktop v0.1.0 - (%1)").arg(currentBookFile));
+    this->setWindowTitle(QString("Tarjeem Desktop - (%1)").arg(currentBookFile));
 
-    QFileInfo pathInfo(currentBookFile);
     if(currentBookFile.isEmpty())
     {
         return;
@@ -146,16 +118,23 @@ void Tarjeem::onOpenBook()
     contentLayout->addWidget(contentText,70);
     content->setLayout(contentLayout);
 
-    mainInfo->setColumnCount(2);
+    QStringList bookInfoHeader;
+    bookInfoHeader << "Code" << "Items" << "Original Text" << "Translation Text";
+    mainInfo->setColumnCount(4);
+    mainInfo->setHorizontalHeaderLabels(bookInfoHeader);
     mainInfo->horizontalHeader()->setStretchLastSection(true);
     mainInfo->resizeRowsToContents();
+    mainInfo->setColumnWidth(0,100);
+    mainInfo->setColumnWidth(1,100);
+    mainInfo->setColumnWidth(2,500);
+    mainInfo->setColumnWidth(3,500);
     tableOfContent->setColumnCount(4);
     tableOfContent->setColumnWidth(0,300); //icon
     tableOfContent->setColumnWidth(1,20); //icon
     tableOfContent->setColumnWidth(2,20); //icon
     tableOfContent->setColumnWidth(3,20); //icon
     tableOfContent->setHeaderLabels(listContent);
-    tab->addTab(mainInfo, "Main");
+    tab->addTab(mainInfo, "Book Information");
     tab->addTab(content, "Content");
 
     this->setCentralWidget(tab);
@@ -171,31 +150,72 @@ void Tarjeem::onOpenBook()
     else {
         QSqlQuery query(db); // get data from .mdb file
 
-        //Main table
+        //Book Info table
+        QString bookInfoItems = "BkId, Bk, Betaka, Inf, Auth, AuthInf, TafseerNam, IslamShort, oNum, oVer, seal, oAuth, bVer, oAuth, bVer, Pdf, oAuthVer, verName, cat, Lng, HigriD, AD, aSeal, bLnk, PdfCs, ShrtCs";
+        query.exec(QString("SELECT %1 FROM Main;").arg(bookInfoItems));
+        query.next();
         for (int i=0; i<listMain.count(); i++)
         {
-            query.exec(QString("SELECT %1 FROM Main;").arg(listMain.at(i)));
-            query.next();
             mainInfo->setRowCount(i+1);
             mainInfo->setItem(i,0,new QTableWidgetItem(QString("%1").arg(listMain.at(i))));
-            mainInfo->setItem(i,1,new QTableWidgetItem(QString("%1").arg(query.value(0).toString())));
+            mainInfo->setItem(i,1,new QTableWidgetItem(QString("%1").arg(listMain.at(i))));
+            mainInfo->setItem(i,2,new QTableWidgetItem(QString("%1").arg(query.value(i).toString())));
+            mainInfo->setItem(i,3,new QTableWidgetItem(QString("...")));
         }
 
         //Content table
-        tableOfContent->insertTopLevelItem(0, new QTreeWidgetItem(QStringList(QString("Daftar Isi")), 0));
+        tableOfContent->insertTopLevelItem(0, new QTreeWidgetItem(QStringList(QString("Table of Contents")), 0));
 
         QString list = "tit, lvl, sub, id";
-        query.exec(QString("SELECT %1 FROM t%2;").arg(list).arg(mainInfo->item(0,1)->text()));
 
+        //level 1
+        int level1idx = 1;
+        query.exec(QString("SELECT %1 FROM t%2 WHERE lvl = 1;").arg(list).arg(mainInfo->item(0,2)->text()));
         while( query.next() )
         {
             QStringList content;
-            for (int i=0; i<4; i++)
-            {
-                content.append(QString("%1").arg(query.value(i).toString()));
-            }
+
+            QString number = QString("%1").arg(level1idx);
+            content.append(QString("%1 - %2").arg(number).arg(query.value(0).toString()));  //tit
+            content.append(QString("%1").arg(query.value(1).toString()));  //lvl
+            content.append(QString("%1").arg(query.value(2).toString()));  //sub
+            content.append(QString("%1").arg(query.value(3).toString()));  //id
+
             tableOfContent->itemAt(0,0)->addChild( new QTreeWidgetItem(content));
+            level1idx++;
         }
+
+        //level 2
+        int currentIdx = 0;
+        int level2idx = 1;
+        query.exec(QString("SELECT %1 FROM t%2 WHERE lvl = 2;").arg(list).arg(mainInfo->item(0,2)->text()));
+        while( query.next() )
+        {
+            int i;
+            for (i=0; i<tableOfContent->itemAt(0,0)->childCount(); i++)
+            {
+                //check if id is bellow
+                if (tableOfContent->itemAt(0,0)->child(i)->data(3,0).toInt() > query.value(3).toInt())
+                    break;
+            }
+
+            if (currentIdx != i-1)
+            {
+                level2idx = 1;
+                currentIdx = i-1;
+            }
+
+            QStringList content;
+            QString number = QString("%1.%2").arg(i).arg(level2idx);
+            content.append(QString("%1 - %2").arg(number).arg(query.value(0).toString()));  //tit
+            content.append(QString("%1").arg(query.value(1).toString()));  //lvl
+            content.append(QString("%1").arg(query.value(2).toString()));  //sub
+            content.append(QString("%1").arg(query.value(3).toString()));  //id
+
+            tableOfContent->itemAt(0,0)->child(i-1)->addChild( new QTreeWidgetItem(content));
+            level2idx++;
+        }
+
         tableOfContent->expandAll();
     }
     db.close();
@@ -207,7 +227,7 @@ void Tarjeem::onItemClicked(QTreeWidgetItem* item)
     filePath.append(currentBookFile);
 
     // create database
-    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "odbc");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "content_odbc");
     db.setDatabaseName(filePath);
 
     if (!db.open()) {
@@ -217,40 +237,21 @@ void Tarjeem::onItemClicked(QTreeWidgetItem* item)
         QSqlQuery query(db); // get data from .mdb file
 
         //content
-        query.exec(QString("SELECT nass FROM b%1;").arg(mainInfo->item(0,1)->text()));
+        query.exec(QString("SELECT nass FROM b%1;").arg(mainInfo->item(0,2)->text()));
 
         contentText->clear();
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-        query.next();
-        contentText->append(QString(query.value(0).toString()));
-        contentText->append("==========================================");
-//        query.next();
-//        contentText->append(QString(query.value(0).toString()));
-//        contentText->append("==========================================");
-
-//        while(query.next())
-//        {
-//            contentText->append(QString(query.value(0).toString()));
-//        }
+        while(query.next())
+        {
+            contentText->append(query.value(0).toString());
+        }
     }
+    db.close();
 }
+
+//QTreeWidgetItem* diggIn(QTreeWidgetItem* current, int level)
+//{
+//    switch(level)
+//    {
+//        case 1: return current->child(0);
+//    }
+//}
