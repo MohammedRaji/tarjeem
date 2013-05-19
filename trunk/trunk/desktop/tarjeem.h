@@ -7,12 +7,15 @@
 #include <QTableView>
 #include <QTextEdit>
 #include <QTabWidget>
+#include <QDockWidget>
 #include <QTableWidget>
 #include <QTreeWidgetItem>
 #include <QComboBox>
 #include <QLabel>
 #include <QProgressBar>
 #include <QMenu>
+
+#include "content.h"
 
 class Tarjeem : public QMainWindow
 {
@@ -27,35 +30,36 @@ public slots:
     void openHelp();
     void onOpenBook();
     void onItemClicked(QTreeWidgetItem* item);
-//    void showContent();
+
+    void showNavigation(bool state);
+    void showTranslation(bool state);
 
 private:
     void createMenu();
     void createStatusBar();
     void activateMenu(bool opt);
-//    QTreeWidgetItem* diggIn(QTreeWidgetItem* current, int level);
-//    QTreeWidgetItem* diggUp(QTreeWidgetItem* current, int level);
+    QTreeWidgetItem* levelIn(QTreeWidgetItem* current, int level);
+    QTreeWidgetItem* levelUp(QTreeWidgetItem* current, int level);
 
-    QMenu *fileMenu;
-    QMenu *translateMenu;
-    QMenu *helpMenu;
+    QMenu        *fileMenu;
+    QMenu        *translateMenu;
+    QMenu        *viewMenu;
+    QMenu        *helpMenu;
 
-    QString currentBookFile;
-
-    QStringList listMain;
-    QStringList listContent;
-
-    QTabWidget   *tab;
-    QTableWidget *mainInfo;
-    QWidget      *content;
-    QTreeWidget  *tableOfContent;
-    QTextEdit    *contentText;
+    QLabel       *status;
+    QProgressBar *progressBar;
     QComboBox    *language;
 
-    QLabel *status;
-    QProgressBar *progressBar;
+    QString       currentBookFile;
 
-    enum {IS_READING, IS_NOT_READING} readingStatus;
+    QStringList   listMain;
+    QStringList   listContent;
+
+    QDockWidget  *dock;
+    Content      *m_content;
+
+    int bookId;
+
 };
 
 #endif

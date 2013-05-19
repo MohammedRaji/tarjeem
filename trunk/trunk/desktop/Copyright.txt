@@ -1,4 +1,4 @@
-Tarjeem is Shamela's book translation software. You are free to install and use it, but no redistributed it. The software is free it use without any guarantee. 
+Tarjeem is Maktaba Shamela's book translation software. It aim to translate Maktaba Shamela's arabic books into any languages. You are free to install and use it, but no to redistributed it. The software is free to use without any guarantee. 
 
 Copyright (c) 2013 Tarjeem (tarjeem.com)
 
@@ -9,7 +9,9 @@ Tarjeem team:
 
 Version Logs
 -------------------------------------
+v.0.2.0
+- New UI, simillar to PDF UI
+- Can show/hide document navigation
 
-v.0.1.1
-Features
-- Convet .bok to .txt
+v.0.1.0
+- Capable of converting arabic .bok file to arabic .txt file

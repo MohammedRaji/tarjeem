@@ -8,6 +8,7 @@
 #include <QToolBar>
 #include <QTextCodec>
 #include <QStatusBar>
+#include <QPalette>
 #include <QDebug>
 
 #include "tarjeem.h"
@@ -18,13 +19,9 @@ Tarjeem::Tarjeem()
     createStatusBar();
     activateMenu(false);
 
-    listMain << "BkId" << "Bk" << "Betaka" << "Inf" << "Auth" << "AuthInf" << "TafseerNam" << "IslamShort"
-             << "oNum" << "oVer" << "seal" << "oAuth" << "bVer" << "oAuth" << "bVer" << "Pdf" << "oAuthVer"
-             << "verName" << "cat" << "Lng" << "HigriD" << "AD" << "aSeal" << "bLnk" << "PdfCs" << "ShrtCs";
+    listMain << "Book Number" << "Title" << "Subtitle" << "Author" << "Author's' Biography" << "Category" << "Author" << "Year";
 
     listContent << "tit" << "lvl" << "sub" << "id";
-
-    readingStatus = IS_NOT_READING;
 
     this->setWindowTitle("Tarjeem Desktop");
 }
@@ -43,12 +40,25 @@ void Tarjeem::createMenu()
 
     fileMenu->actions().at(1)->setDisabled(true);
 
+    viewMenu = menuBar()->addMenu(tr("&View"));
+    viewMenu->addAction("Show Document Navigation", this, SLOT(showNavigation(bool)), Qt::ControlModifier + Qt::Key_L);
+    viewMenu->addAction("Show Translation Page", this, SLOT(showTranslation(bool)), Qt::ControlModifier + Qt::Key_T);
+    viewMenu->actions().at(0)->setCheckable(true);
+    viewMenu->actions().at(0)->setChecked(true);
+    viewMenu->actions().at(1)->setCheckable(true);
+    viewMenu->actions().at(1)->setChecked(false);
+
     translateMenu = menuBar()->addMenu(tr("&Translate"));
-    translateMenu->addAction(QIcon("://run.png"), "Run", this, SLOT(openBook()), Qt::ControlModifier + Qt::Key_R);
-    translateMenu->addAction(QIcon("://pause.png"), "Pause", this, SLOT(openBook()), NULL);
-    translateMenu->addAction(QIcon("://restart.png"), "Restart", this, SLOT(openBook()), NULL);
+    //    translateMenu->addAction(QIcon("://run.png"), "Run", this, SLOT(openBook()), Qt::ControlModifier + Qt::Key_R);
+    //    translateMenu->addAction(QIcon("://pause.png"), "Pause", this, SLOT(openBook()), NULL);
+    //    translateMenu->addAction(QIcon("://restart.png"), "Restart", this, SLOT(openBook()), NULL);
+    //    translateMenu->addSeparator();
+    //    translateMenu->addAction(QIcon("://stop.png"), "Stop", this, SLOT(openBook()), Qt::ControlModifier + Qt::Key_X);
+    translateMenu->addAction(QIcon("://run.png"), "Run");
+    translateMenu->addAction(QIcon("://pause.png"), "Pause");
+    translateMenu->addAction(QIcon("://restart.png"), "Restart");
     translateMenu->addSeparator();
-    translateMenu->addAction(QIcon("://stop.png"), "Stop", this, SLOT(openBook()), Qt::ControlModifier + Qt::Key_X);
+    translateMenu->addAction(QIcon("://stop.png"), "Stop");
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction("About", this, SLOT(openHelp()));
@@ -74,10 +84,10 @@ void Tarjeem::createStatusBar()
 {
     status = new QLabel("Ready", this);
     status->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    status->setFixedWidth(100);
     progressBar = new QProgressBar(this);
     progressBar->setInvertedAppearance(true);
     progressBar->setVisible(true);
-    //    progressBar->hide();
 
     statusBar()->addWidget(status, 0);
     statusBar()->addWidget(progressBar, 1);
@@ -85,6 +95,8 @@ void Tarjeem::createStatusBar()
 
 void Tarjeem::activateMenu(bool opt)
 {
+    viewMenu->actions().at(0)->setEnabled(opt);
+    viewMenu->actions().at(1)->setEnabled(opt);
     translateMenu->actions().at(0)->setEnabled(opt);
     translateMenu->actions().at(1)->setEnabled(opt);
     translateMenu->actions().at(2)->setEnabled(opt);
@@ -94,8 +106,6 @@ void Tarjeem::activateMenu(bool opt)
 void Tarjeem::openBook()
 {
     currentBookFile = QFileDialog::getOpenFileName(this, tr("Buka File Buku"), "", tr("Shamela Book (*.bok)"));
-
-    this->setWindowTitle(QString("Tarjeem Desktop - (%1)").arg(currentBookFile));
 
     if(currentBookFile.isEmpty())
     {
@@ -118,43 +128,13 @@ void Tarjeem::openHelp()
 
 void Tarjeem::onOpenBook()
 {
-    tab = new QTabWidget(this);
-    mainInfo = new QTableWidget(this);
-    content = new QWidget(this);
-    tableOfContent = new QTreeWidget(this);
-    contentText = new QTextEdit(this);
+    m_content = new Content(this);
+    dock = new QDockWidget("Books", NULL);
 
-    QFont font("Arial", 16, QFont::Normal, false);
-    contentText->setFont(font);
-    contentText->setStyleSheet("QLabel { color : black; }");
+    connect(m_content->tableOfContent, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onItemClicked(QTreeWidgetItem*)) );
 
-    connect(tableOfContent, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onItemClicked(QTreeWidgetItem*)) );
-
-    QHBoxLayout *contentLayout = new QHBoxLayout;
-    contentLayout->addWidget(tableOfContent,30);
-    contentLayout->addWidget(contentText,70);
-    content->setLayout(contentLayout);
-
-    QStringList bookInfoHeader;
-    bookInfoHeader << "Code" << "Items" << "Original Text" << "Translation Text";
-    mainInfo->setColumnCount(4);
-    mainInfo->setHorizontalHeaderLabels(bookInfoHeader);
-    mainInfo->horizontalHeader()->setStretchLastSection(true);
-    mainInfo->resizeRowsToContents();
-    mainInfo->setColumnWidth(0,100);
-    mainInfo->setColumnWidth(1,100);
-    mainInfo->setColumnWidth(2,500);
-    mainInfo->setColumnWidth(3,500);
-    tableOfContent->setColumnCount(4);
-    tableOfContent->setColumnWidth(0,300); //icon
-    tableOfContent->setColumnWidth(1,20); //icon
-    tableOfContent->setColumnWidth(2,20); //icon
-    tableOfContent->setColumnWidth(3,20); //icon
-    tableOfContent->setHeaderLabels(listContent);
-    tab->addTab(mainInfo, "Book Information");
-    tab->addTab(content, "Content");
-
-    this->setCentralWidget(tab);
+    dock->setWidget(m_content);
+    this->setCentralWidget(dock);
 
     QString filePath = QString("DRIVER={Driver do Microsoft Access (*.mdb)};FIL={CONN_NAME};DBQ=%1").arg(currentBookFile);
 
@@ -167,124 +147,204 @@ void Tarjeem::onOpenBook()
     else {
         QSqlQuery query(db); // get data from .mdb file
 
-        //Book Info table
-        QString bookInfoItems = "BkId, Bk, Betaka, Inf, Auth, AuthInf, TafseerNam, IslamShort, oNum, oVer, seal, oAuth, bVer, oAuth, bVer, Pdf, oAuthVer, verName, cat, Lng, HigriD, AD, aSeal, bLnk, PdfCs, ShrtCs";
+        //-----------------------------------
+        // Cover
+        //-----------------------------------
+        QString bookInfoItems = "BkId, Bk, Betaka, Auth, AuthInf, cat, Lng, HigriD";
         query.exec(QString("SELECT %1 FROM Main;").arg(bookInfoItems));
         query.next();
-        for (int i=0; i<listMain.count(); i++)
-        {
-            mainInfo->setRowCount(i+1);
-            mainInfo->setItem(i,0,new QTableWidgetItem(QString("%1").arg(listMain.at(i))));
-            mainInfo->setItem(i,1,new QTableWidgetItem(QString("%1").arg(listMain.at(i))));
-            mainInfo->setItem(i,2,new QTableWidgetItem(QString("%1").arg(query.value(i).toString())));
-            mainInfo->setItem(i,3,new QTableWidgetItem(QString("...")));
-        }
 
-        //Content table
-        tableOfContent->insertTopLevelItem(0, new QTreeWidgetItem(QStringList(QString("Table of Contents")), 0));
+        bookId = query.value(0).toInt();
+        this->setWindowTitle(QString("Tarjeem Desktop - %1").arg(query.value(1).toString()));
 
+        QString title = QString("<font color=\"blue\">%1</font>").arg(query.value(1).toString());
+
+        QString coverText;
+        coverText.append(QString("<p>Number: %1</p>").arg(query.value(0).toString()));
+        coverText.append(QString("<p>Category: %1</p>").arg(query.value(5).toString()));
+        coverText.append(QString("<p>Title: %1</p>").arg(query.value(1).toString()));
+        coverText.append(QString("<p>Subtitle: %1</p>").arg(query.value(2).toString()));
+        coverText.append(QString("<p>Author: %1</p>").arg(query.value(3).toString()));
+        coverText.append(QString("<p>Author's Biography: %1</p>").arg(query.value(4).toString()));
+        coverText.append(QString("<p>Author: %1</p>").arg(query.value(6).toString()));
+        coverText.append(QString("<p>Year: %1</p>").arg(query.value(7).toString()));
+
+        int row = 0;
+        m_content->contentTable->setRowCount(row+1);
+        m_content->contentTable->setItem(row, 0, new QTableWidgetItem(coverText));
+        m_content->contentTable->setItem(row, 1, new QTableWidgetItem("0"));
+        row++;
+
+        //-----------------------------------
+        // Table of Content
+        //-----------------------------------
         QString list = "tit, lvl, sub, id";
+        QString contentList = "nass, id";
 
-        //level 1
-        int level1idx = 1;
-        query.exec(QString("SELECT %1 FROM t%2 WHERE lvl = 1;").arg(list).arg(mainInfo->item(0,2)->text()));
-        while( query.next() )
+        query.exec(QString("SELECT %1 FROM t%2;").arg(list).arg(bookId));
+        int range = 0;
+        while(query.next())
         {
-            QStringList content;
-
-            QString number = QString("%1").arg(level1idx);
-            content.append(QString("%1 - %2").arg(number).arg(query.value(0).toString()));  //tit
-            content.append(QString("%1").arg(query.value(1).toString()));  //lvl
-            content.append(QString("%1").arg(query.value(2).toString()));  //sub
-            content.append(QString("%1").arg(query.value(3).toString()));  //id
-
-            tableOfContent->itemAt(0,0)->addChild( new QTreeWidgetItem(content));
-            level1idx++;
+            range++;
         }
-
-        //level 2
-        int currentIdx = 0;
-        int level2idx = 1;
-        query.exec(QString("SELECT %1 FROM t%2 WHERE lvl = 2;").arg(list).arg(mainInfo->item(0,2)->text()));
-        while( query.next() )
+        query.exec(QString("SELECT %1 FROM b%2;").arg(contentList).arg(bookId));
+        while(query.next())
         {
-            int i;
-            for (i=0; i<tableOfContent->itemAt(0,0)->childCount(); i++)
+            range++;
+        }
+        progressBar->setRange(0,range-1);
+
+        m_content->tableOfContent->insertTopLevelItem(0, new QTreeWidgetItem(QStringList(QString("Table of Contents")), 0));
+        m_content->tableOfContent->itemAt(0,0)->setForeground( 0,QBrush(Qt::white) );
+
+        int levelDepth[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int currentLevel = 1;
+
+        query.exec(QString("SELECT %1 FROM t%2;").arg(list).arg(bookId));
+
+        QTreeWidgetItem *current = m_content->tableOfContent->itemAt(0,0);
+        progressBar->setValue(0);
+        int progress = 0;
+        while (query.next())
+        {
+            if ( query.value(1).toInt() > currentLevel )
             {
-                //check if id is bellow
-                if (tableOfContent->itemAt(0,0)->child(i)->data(3,0).toInt() > query.value(3).toInt())
-                    break;
+                current = levelIn(current, (query.value(1).toInt() - currentLevel) );
+            }
+            else if ( query.value(1).toInt() < currentLevel )
+            {
+                current = levelUp(current, (currentLevel - query.value(1).toInt()) );
             }
 
-            if (currentIdx != i-1)
+            currentLevel = query.value(1).toInt();
+            levelDepth[currentLevel-1] = levelDepth[currentLevel-1]++;
+
+            QString number;
+            for (int i=0; i<10; i++)
             {
-                level2idx = 1;
-                currentIdx = i-1;
+                if (i<currentLevel)
+                {
+                    number.append(QString::number(levelDepth[i]));
+                    number.append(".");
+                }
+                else
+                {
+                    levelDepth[i] = 0;
+                }
             }
 
             QStringList content;
-            QString number = QString("%1.%2").arg(i).arg(level2idx);
-            content.append(QString("%1 - %2").arg(number).arg(query.value(0).toString()));  //tit
-            content.append(QString("%1").arg(query.value(1).toString()));  //lvl
-            content.append(QString("%1").arg(query.value(2).toString()));  //sub
+            content.append(QString("%1 - %2").arg(number).arg(query.value(0).toString()));  //numbering and title
+            content.append(QString("%1").arg(query.value(0).toString()));  //title
+            content.append(QString("%1").arg(number));                     //numbering
+            content.append(QString("%1").arg(query.value(1).toString()));  //level
             content.append(QString("%1").arg(query.value(3).toString()));  //id
+            content.append(QString("%1").arg(query.value(3).toString()));  //content
 
-            tableOfContent->itemAt(0,0)->child(i-1)->addChild( new QTreeWidgetItem(content));
-            level2idx++;
+            current->addChild(new QTreeWidgetItem(content));
+            current->child( current->childCount()-1 )->setIcon(0,QIcon("://book-icon.png"));
+            current->child( current->childCount()-1 )->setForeground( 0,QBrush(Qt::white) );
+
+            progressBar->setValue(progress);
+            progress++;
         }
+        m_content->tableOfContent->expandAll();
 
-        tableOfContent->expandAll();
+        QString text;
+        text.append(m_content->contentTable->item(0,0)->text());
+
+        m_content->contentText->clear();
+        m_content->contentText->setHtml(text);
+
+        QStringList coverContent;
+        coverContent.append("Cover");
+        coverContent.append("0");
+        coverContent.append("0");
+        coverContent.append("0");
+        coverContent.append("0");
+        m_content->tableOfContent->insertTopLevelItem(0, new QTreeWidgetItem(coverContent, 0));
+        m_content->tableOfContent->itemAt(0,1)->setForeground( 0,QBrush(Qt::white) );
+
+        query.exec(QString("SELECT %1 FROM b%2;").arg(contentList).arg(bookId));
+
+        while(query.next())
+        {
+            m_content->contentTable->setRowCount(row+1);
+            m_content->contentTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString()));
+            m_content->contentTable->setItem(row, 1, new QTableWidgetItem(query.value(1).toString()));
+            row++;
+
+            progressBar->setValue(progress);
+            progress++;
+        }
+        progressBar->setValue(0);
+
     }
     db.close();
+
+    activateMenu(true);
 }
 
 void Tarjeem::onItemClicked(QTreeWidgetItem* item)
 {
-    disconnect(tableOfContent, SIGNAL(itemClicked(QTreeWidgetItem*,int)), 0, 0);
+    QString text;
+    if      (item->text(3).toInt() == 1)
+        text.append(QString("<div align=center><p><font color=\"blue\" size=\"8\">%1</font></p></div>").arg(item->text(1)));
+    else if (item->text(3).toInt() == 2)
+        text.append(QString("<p><font color=\"blue\" size=\"7\">%1</font></p>").arg(item->text(1)));
+    else if (item->text(3).toInt() == 3)
+        text.append(QString("<p><font color=\"blue\" size=\"6\">%1</font></p>").arg(item->text(1)));
+    else if (item->text(3).toInt() == 4)
+        text.append(QString("<p><font color=\"blue\" size=\"5\">%1</font></p>").arg(item->text(1)));
+    else if (item->text(3).toInt() == 5)
+        text.append(QString("<p><font color=\"blue\" size=\"4\">%1</font></p>").arg(item->text(1)));
 
-    QString filePath = "DRIVER={Driver do Microsoft Access (*.mdb)};FIL={CONN_NAME};DBQ=";
-    filePath.append(currentBookFile);
-
-    // create database
-    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "content_odbc");
-    db.setDatabaseName(filePath);
-
-    if (!db.open()) {
-        QMessageBox::warning(this,"Error","SQlite: Failed to create database");
+    int id = 0;
+    while(id < item->text(4).toInt())
+    {
+        id++;
     }
-    else {
-        QSqlQuery query(db); // get data from .mdb file
 
-        //get size
-        query.exec(QString("SELECT nass FROM b%1;").arg(mainInfo->item(0,2)->text()));
-        int size = 0;
-        while(query.next())
-        {
-            size++;
-        }
-        progressBar->setRange(0,size-1); //set impossible value
-
-        //content
-        query.exec(QString("SELECT nass FROM b%1;").arg(mainInfo->item(0,2)->text()));
-
-        int i=0;
-        while(query.next())
-        {
-            contentText->append(query.value(0).toString());
-            progressBar->setValue(i);
-            i++;
-        }
-        progressBar->setValue(0);
-    }
-    db.close();
-
-    connect(tableOfContent, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onItemClicked(QTreeWidgetItem*)) );
+    m_content->contentText->clear();
+    m_content->contentText->setHtml(text);
+    m_content->contentText->append(m_content->contentTable->item(id,0)->text());
 }
 
-//QTreeWidgetItem* diggIn(QTreeWidgetItem* current, int level)
-//{
-//    switch(level)
-//    {
-//        case 1: return current->child(0);
-//    }
-//}
+QTreeWidgetItem* Tarjeem::levelIn(QTreeWidgetItem* current, int level)
+{
+    int numberOfChild = current->childCount();
+    switch(level)
+    {
+    case 1: return current->child(numberOfChild-1); break;
+    default: return current;
+    }
+}
+
+QTreeWidgetItem* Tarjeem::levelUp(QTreeWidgetItem* current, int level)
+{
+    switch(level)
+    {
+    case 1: return current->parent(); break;
+    case 2: return current->parent()->parent(); break;
+    case 3: return current->parent()->parent()->parent(); break;
+    case 4: return current->parent()->parent()->parent()->parent(); break;
+    case 5: return current->parent()->parent()->parent()->parent()->parent(); break;
+    default: return current;
+    }
+}
+
+void Tarjeem::showNavigation(bool show)
+{
+    if (show)
+        m_content->tableOfContent->show();
+    else
+        m_content->tableOfContent->hide();
+}
+
+void Tarjeem::showTranslation(bool show)
+{
+    if (show)
+        m_content->translatedText->show();
+    else
+        m_content->translatedText->hide();
+}

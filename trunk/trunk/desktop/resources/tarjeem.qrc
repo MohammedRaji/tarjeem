@@ -9,5 +9,9 @@
         <file>country_us.png</file>
         <file>country_jp.png</file>
         <file>open_url.png</file>
+        <file>book-icon.png</file>
+        <file>background.png</file>
+        <file>toc_bg.png</file>
+        <file>bg_white.png</file>
     </qresource>
 </RCC>
