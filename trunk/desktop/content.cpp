@@ -3,6 +3,9 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QPalette>
+#include <QBitmap>
+#include <QPixmap>
+#include <QEvent>
 
 Content::Content(QWidget *parent)
     : QWidget (parent)
@@ -61,13 +64,41 @@ Content::Content(QWidget *parent)
     tableOfContent->setHeaderHidden(true);
 
     QPalette p( tableOfContent->palette() );
-    p.setColor( QPalette::Base, Qt::darkGray );
+    p.setColor( QPalette::Base, QColor(90,90,90) );
     tableOfContent->setPalette( p );
+
+    //----------------------------------------------
+    // Navigation Controller
+    //----------------------------------------------
+    QWidget *navigationController = new QWidget(this);
+
+    QPalette Pal(palette());
+    Pal.setColor(QPalette::Background, QColor(70,70,70));
+    navigationController->setAutoFillBackground(true);
+    navigationController->setPalette(Pal);
+    navigationController->setFixedWidth(28);
+
+    showNavigation = new QPushButton(QIcon("://navigation_btn_show.png"), "", navigationController);
+    showNavigation->setFlat(true);
+    showNavigation->setGeometry(0,30,28,28);
+    showNavigation->setIconSize(QSize(showNavigation->width(), showNavigation->height()));
+    showNavigation->setCheckable(true);
+    showNavigation->setChecked(true);
+    showNavigation->installEventFilter(this);
+
+    showTranslation = new QPushButton(QIcon("://translation_btn.png"), "", navigationController);
+    showTranslation->setFlat(true);
+    showTranslation->setGeometry(0,58,28,28);
+    showTranslation->setIconSize(QSize(showNavigation->width(), showNavigation->height()));
+    showTranslation->setCheckable(true);
+    showTranslation->setChecked(false);
+    showTranslation->installEventFilter(this);
 
     //----------------------------------------------
     // Content Layout
     //----------------------------------------------
     QHBoxLayout *contentLayout = new QHBoxLayout;
+    contentLayout->addWidget(navigationController,5);
     contentLayout->addWidget(tableOfContent,30);
     contentLayout->addWidget(left,15);
     contentLayout->addWidget(leftMargin,5);
@@ -77,7 +108,39 @@ Content::Content(QWidget *parent)
     contentLayout->addWidget(right,15);
     contentLayout->setMargin(0);
     contentLayout->setSpacing(0);
+
     this->setLayout(contentLayout);
+    this->setMouseTracking(true);
+}
+
+bool Content::eventFilter(QObject* object, QEvent* event)
+{
+    //hover effect
+    if(object == showNavigation && event->type() == QEvent::Enter)
+    {
+        showNavigation->setIcon(QIcon("://navigation_btn_hover.png"));
+    }
+    if(object == showTranslation && event->type() == QEvent::Enter)
+    {
+        showTranslation->setIcon(QIcon("://translation_btn_hover.png"));
+    }
+
+    if(object == showNavigation && event->type() == QEvent::Leave)
+    {
+        if (showNavigation->isChecked())
+            showNavigation->setIcon(QIcon("://navigation_btn_show.png"));
+        else
+            showNavigation->setIcon(QIcon("://navigation_btn.png"));
+    }
+    if(object == showTranslation && event->type() == QEvent::Leave)
+    {
+        if (showTranslation->isChecked())
+            showTranslation->setIcon(QIcon("://translation_btn_show.png"));
+        else
+            showTranslation->setIcon(QIcon("://translation_btn.png"));
+    }
+
+    return false;
 }
 
 Content::~Content()

@@ -132,6 +132,8 @@ void Tarjeem::onOpenBook()
     dock = new QDockWidget("Books", NULL);
 
     connect(m_content->tableOfContent, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onItemClicked(QTreeWidgetItem*)) );
+    connect(m_content->showNavigation, SIGNAL(clicked(bool)), this, SLOT(showNavigation(bool)) );
+    connect(m_content->showTranslation, SIGNAL(clicked(bool)), this, SLOT(showTranslation(bool)) );
 
     dock->setWidget(m_content);
     this->setCentralWidget(dock);
@@ -339,6 +341,9 @@ void Tarjeem::showNavigation(bool show)
         m_content->tableOfContent->show();
     else
         m_content->tableOfContent->hide();
+
+    m_content->showNavigation->setChecked(show);
+    viewMenu->actions().at(0)->setChecked(show);
 }
 
 void Tarjeem::showTranslation(bool show)
@@ -347,4 +352,7 @@ void Tarjeem::showTranslation(bool show)
         m_content->translatedText->show();
     else
         m_content->translatedText->hide();
+
+    m_content->showTranslation->setChecked(show);
+    viewMenu->actions().at(1)->setChecked(show);
 }
