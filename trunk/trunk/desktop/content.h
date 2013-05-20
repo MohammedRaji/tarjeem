@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QTreeWidget>
 #include <QTableWidget>
+#include <QPushButton>
 
 class Content : public QWidget
 {
@@ -22,8 +23,14 @@ public:
     QTextEdit *translatedText;
     QLabel *rightMargin;
 
+    QPushButton *showNavigation;
+    QPushButton *showTranslation;
+
     QTreeWidget  *tableOfContent;
     QTableWidget *contentTable;
+
+protected:
+    bool eventFilter(QObject* object, QEvent* event);
 };
 
 #endif

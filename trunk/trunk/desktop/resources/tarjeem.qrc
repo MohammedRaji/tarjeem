@@ -13,5 +13,11 @@
         <file>background.png</file>
         <file>toc_bg.png</file>
         <file>bg_white.png</file>
+        <file>navigation_btn.png</file>
+        <file>navigation_btn_hover.png</file>
+        <file>navigation_btn_show.png</file>
+        <file>translation_btn.png</file>
+        <file>translation_btn_hover.png</file>
+        <file>translation_btn_show.png</file>
     </qresource>
 </RCC>
