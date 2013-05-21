@@ -1,3 +1,4 @@
+
 Tambahan:
 ============================================
 .htaccess
@@ -9,9 +10,16 @@ netbeans_autocomplete_codeigniter.php
 /core
 --/MY_Controller
 --/MY_Model
+/view
+--/layouts/
+----/master.php
+
 
 Edited
 ============================================
 /config
---/config.php
---/database.php
+--/config.php    $config['enable_hooks'] = TRUE;
+--/database.php  $db['default']['username'] = 'tarjeem';
+                 $db['default']['password'] = 'tarjeem';
+                 $db['default']['database'] = 'tarjeem';
+--/autoload.php  $autoload['libraries'] = array('database', 'login');
