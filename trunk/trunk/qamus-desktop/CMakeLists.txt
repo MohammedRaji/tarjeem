@@ -7,7 +7,7 @@ IF(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
 
-PROJECT("Tarjeem")
+PROJECT("Qamus Dictionary Generator")
 
 SET(CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.0.2\\5.0.2\\msvc2010\\")
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -49,20 +49,18 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 SET(MAIN_UI_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/tarjeem.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/content.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/qamus.cpp
 )
 
 SET(MAIN_UI_MOC_HDRS 
-	${CMAKE_CURRENT_SOURCE_DIR}/tarjeem.h
-	${CMAKE_CURRENT_SOURCE_DIR}/content.h
+	${CMAKE_CURRENT_SOURCE_DIR}/qamus.h
 )
 
-SET(MAIN_UI_RC ${CMAKE_CURRENT_SOURCE_DIR}/resources/tarjeem.qrc)
+SET(MAIN_UI_RC ${CMAKE_CURRENT_SOURCE_DIR}/resources/qamus.qrc)
 
 QT5_ADD_RESOURCES(MAIN_UI_RC_SRCS ${MAIN_UI_RC})
 
-SET(WIN_RESOURCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/tarjeem.rc)
+SET(WIN_RESOURCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/qamus.rc)
 ADD_EXECUTABLE(
 	${PROJECT_NAME} 
 	WIN32
@@ -71,29 +69,29 @@ ADD_EXECUTABLE(
 	${MAIN_UI_MOC_SRCS}
 	${WIN_RESOURCE_FILE})
 
-QT5_USE_MODULES(${PROJECT_NAME} Widgets Sql Network)	
+QT5_USE_MODULES(${PROJECT_NAME} Widgets Sql Network Xml)	
 SET_PROPERTY(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE_DEBUG 0)
 
 #####################################################
 ## PACKAGE 
 #####################################################
 SET(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-SET(CPACK_PACKAGE_VENDOR "AirQuest-LTE")
-SET(CPACK_PACKAGE_EXECUTABLES ${PROJECT_NAME};Tarjeem)
+SET(CPACK_PACKAGE_VENDOR "Tarjeem")
+SET(CPACK_PACKAGE_EXECUTABLES ${PROJECT_NAME};Qamus)
 SET(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/Copyright.txt")
 SET(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/resources/\\\\installer_header.bmp")
 SET(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/resources/\\\\icon.ico")
 SET(CPACK_NSIS_MUI_UNIICON "${PROJECT_SOURCE_DIR}/resources/\\\\icon.ico")
 
-SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Tarjeem Desktop 0.2.1")
-SET(CPACK_PACKAGE_VERSION "0.2.1")
-SET(CPACK_PACKAGE_VERSION_MAJOR "0")
-SET(CPACK_PACKAGE_VERSION_MINOR "2")
-SET(CPACK_PACKAGE_VERSION_PATCH "1")
+SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Tarjeem Desktop 1.0.0")
+SET(CPACK_PACKAGE_VERSION "1.0.0")
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "0")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
 
 IF(WIN32 AND NOT UNIX)
-  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\Tarjeem.exe")
-  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}Tarjeem")
+  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\Qamus.exe")
+  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}Qamus")
   SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.airquest-lte.com")
   SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.airquest-lte.com")
   SET(CPACK_NSIS_CONTACT "info@airquest-lte.com")
@@ -115,6 +113,7 @@ IF(WIN32)
         "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/Qt5Widgets.dll" 
         "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/Qt5Sql.dll" 
         "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/Qt5Network.dll" 
+        "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/Qt5Xml.dll" 
         "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/icudt49.dll" 
         "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/icuin49.dll" 
         "C:/Qt/Qt5.0.2/5.0.2/msvc2010/bin/icuuc49.dll" 
@@ -129,15 +128,11 @@ IF(WIN32)
         "C:/Qt/Qt5.0.2/5.0.2/msvc2010/plugins/platforms/qwindows.dll" 
 		DESTINATION bin/platforms
 	)	
-    INSTALL(FILES
-        "${PROJECT_SOURCE_DIR}/plugins/sqldrivers/qsqlodbc.dll" 
-		DESTINATION bin/plugins/sqldrivers
-	)
 
-    INSTALL(FILES
-        "${PROJECT_SOURCE_DIR}/books/example.bok" 
-		DESTINATION books
-	)
+#    INSTALL(FILES
+#        "${PROJECT_SOURCE_DIR}/wordlists/arabic-wordlist-1.4.txt" 
+#		DESTINATION wordlists
+#	)
 	
 ENDIF(WIN32)
 
