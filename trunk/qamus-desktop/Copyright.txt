@@ -1,0 +1,4 @@
+Qamus is FREE arabic dictionary words generator.
+
+Copyright (c) 2013 Tarjeem (tarjeem.com)
+

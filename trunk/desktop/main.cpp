@@ -15,4 +15,6 @@ int main(int argc, char *argv[])
     tarjeem->showMaximized();
 
     app.exec();
+
+	return 0;
 }

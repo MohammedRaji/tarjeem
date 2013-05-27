@@ -9,6 +9,9 @@
 #include <QTextCodec>
 #include <QStatusBar>
 #include <QPalette>
+#include <QNetworkAccessManager>
+#include <QRegExp>
+#include <QTimer>
 #include <QDebug>
 
 #include "tarjeem.h"
@@ -19,9 +22,21 @@ Tarjeem::Tarjeem()
     createStatusBar();
     activateMenu(false);
 
-    listMain << "Book Number" << "Title" << "Subtitle" << "Author" << "Author's' Biography" << "Category" << "Author" << "Year";
+    listMain << "Book Number"
+             << "Title"
+             << "Subtitle"
+             << "Author"
+             << "Author's' Biography"
+             << "Category"
+             << "Author"
+             << "Year";
 
-    listContent << "tit" << "lvl" << "sub" << "id";
+    listContent << "tit"
+                << "lvl"
+                << "sub"
+                << "id";
+
+    progressValue = 0;
 
     this->setWindowTitle("Tarjeem Desktop");
 }
@@ -43,22 +58,26 @@ void Tarjeem::createMenu()
     viewMenu = menuBar()->addMenu(tr("&View"));
     viewMenu->addAction("Show Document Navigation", this, SLOT(showNavigation(bool)), Qt::ControlModifier + Qt::Key_L);
     viewMenu->addAction("Show Translation Page", this, SLOT(showTranslation(bool)), Qt::ControlModifier + Qt::Key_T);
+    viewMenu->addAction("Show Search Panel", this, SLOT(showTranslation(bool)), Qt::ControlModifier + Qt::Key_F);
     viewMenu->actions().at(0)->setCheckable(true);
     viewMenu->actions().at(0)->setChecked(true);
     viewMenu->actions().at(1)->setCheckable(true);
     viewMenu->actions().at(1)->setChecked(false);
 
     translateMenu = menuBar()->addMenu(tr("&Translate"));
-    //    translateMenu->addAction(QIcon("://run.png"), "Run", this, SLOT(openBook()), Qt::ControlModifier + Qt::Key_R);
+    translateMenu->addAction(QIcon("://run.png"), "Run", this, SLOT(onTranslate()), Qt::ControlModifier + Qt::Key_T);
     //    translateMenu->addAction(QIcon("://pause.png"), "Pause", this, SLOT(openBook()), NULL);
     //    translateMenu->addAction(QIcon("://restart.png"), "Restart", this, SLOT(openBook()), NULL);
     //    translateMenu->addSeparator();
     //    translateMenu->addAction(QIcon("://stop.png"), "Stop", this, SLOT(openBook()), Qt::ControlModifier + Qt::Key_X);
-    translateMenu->addAction(QIcon("://run.png"), "Run");
+    //    translateMenu->addAction(QIcon("://run.png"), "Run");
     translateMenu->addAction(QIcon("://pause.png"), "Pause");
     translateMenu->addAction(QIcon("://restart.png"), "Restart");
-    translateMenu->addSeparator();
     translateMenu->addAction(QIcon("://stop.png"), "Stop");
+    translateMenu->addSeparator();
+    translateMenu->addAction("Dictionary");
+    translateMenu->addSeparator();
+    translateMenu->addAction("Settings", this, SLOT(openSettings()));
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction("About", this, SLOT(openHelp()));
@@ -162,14 +181,22 @@ void Tarjeem::onOpenBook()
         QString title = QString("<font color=\"blue\">%1</font>").arg(query.value(1).toString());
 
         QString coverText;
-        coverText.append(QString("<p>Number: %1</p>").arg(query.value(0).toString()));
-        coverText.append(QString("<p>Category: %1</p>").arg(query.value(5).toString()));
-        coverText.append(QString("<p>Title: %1</p>").arg(query.value(1).toString()));
-        coverText.append(QString("<p>Subtitle: %1</p>").arg(query.value(2).toString()));
-        coverText.append(QString("<p>Author: %1</p>").arg(query.value(3).toString()));
-        coverText.append(QString("<p>Author's Biography: %1</p>").arg(query.value(4).toString()));
-        coverText.append(QString("<p>Author: %1</p>").arg(query.value(6).toString()));
-        coverText.append(QString("<p>Year: %1</p>").arg(query.value(7).toString()));
+        //coverText.append(QString("<p>%1 •</p>").arg(query.value(0).toString()));
+        //        coverText.append(QString("<p>%1 •</p>").arg(query.value(5).toString()));
+        //        coverText.append(QString("<p>%1 •</p>").arg(query.value(1).toString()));
+        //        coverText.append(QString("<p>%1 •</p>").arg(query.value(2).toString()));
+        //        coverText.append(QString("<p>%1 •</p>").arg(query.value(3).toString()));
+        //        coverText.append(QString("<p>%1 •</p>").arg(query.value(4).toString()));
+        //        coverText.append(QString("<p>%1 •</p>").arg(query.value(6).toString()));
+        //        coverText.append(QString("<p>%1 •</p>").arg(query.value(7).toString()));
+
+        coverText.append(QString("<p>%1</p>").arg(query.value(5).toString()));
+        coverText.append(QString("<p>%1</p>").arg(query.value(1).toString()));
+        coverText.append(QString("<p>%1</p>").arg(query.value(2).toString()));
+        coverText.append(QString("<p>%1</p>").arg(query.value(3).toString()));
+        coverText.append(QString("<p>%1</p>").arg(query.value(4).toString()));
+        coverText.append(QString("<p>%1</p>").arg(query.value(6).toString()));
+        coverText.append(QString("<p>%1</p>").arg(query.value(7).toString()));
 
         int row = 0;
         m_content->contentTable->setRowCount(row+1);
@@ -344,6 +371,11 @@ void Tarjeem::showNavigation(bool show)
 
     m_content->showNavigation->setChecked(show);
     viewMenu->actions().at(0)->setChecked(show);
+
+    if (m_content->showNavigation->isChecked())
+        m_content->showNavigation->setIcon(QIcon("://navigation_btn_show.png"));
+    else
+        m_content->showNavigation->setIcon(QIcon("://navigation_btn.png"));
 }
 
 void Tarjeem::showTranslation(bool show)
@@ -355,4 +387,106 @@ void Tarjeem::showTranslation(bool show)
 
     m_content->showTranslation->setChecked(show);
     viewMenu->actions().at(1)->setChecked(show);
+
+    if (m_content->showTranslation->isChecked())
+        m_content->showTranslation->setIcon(QIcon("://translation_btn_show.png"));
+    else
+        m_content->showTranslation->setIcon(QIcon("://translation_btn.png"));
+}
+
+void Tarjeem::onTranslate()
+{
+    m_content->translatedText->setText("Translating...");
+
+    QNetworkAccessManager *netManager = new QNetworkAccessManager();
+
+    connect(netManager, SIGNAL(finished(QNetworkReply*)), SLOT(translateFinished(QNetworkReply*)));
+
+    QString text = m_content->contentText->toPlainText();
+
+    QStringList splitted = text.split("\n"); //example: "الكتاب: مَقَاصِدُ المُكَلفينَ فيمَا يُتعَبَّدُ به لِرَبِّ العَالمين";
+
+    //calculate number of parts
+    int numOfParts = 0;
+    for (int index=0; index<splitted.count(); index++)
+    {
+        QStringList tmp = splitted.at(index).split(".");
+        numOfParts = numOfParts+tmp.count();
+    }
+    progressBar->setRange(0,numOfParts-1);
+
+    //run translating
+    m_content->translatedText->clear();
+
+    QString lang;
+    if (language->currentIndex() == 0) {
+        lang.append("id");
+    } else if (language->currentIndex() == 1) {
+        lang.append("ja");
+    } else if (language->currentIndex() == 2) {
+        lang.append("en");
+    }
+
+    QStringList splitted2;
+    for (int index_outer=0; index_outer<splitted.count(); index_outer++)
+    {
+        splitted2.clear();
+        splitted2 = splitted.at(index_outer).split(".");
+
+        for (int index_inner=0; index_inner<splitted2.count(); index_inner++)
+        {
+            if (splitted2.at(index_inner).size() < 256)
+            {
+                QUrl url(QString("http://fusi.co.id/translate.php?lang=%1\&\&input=\"%2\"").arg(lang).arg(splitted2.at(index_inner)));
+                QNetworkReply *reply = netManager->get(QNetworkRequest(url));
+                connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(showDownloadProgress(qint64,qint64)));
+            }
+        }
+    }
+}
+
+void Tarjeem::startTranslate()
+{
+}
+
+void Tarjeem::translateFinished(QNetworkReply* reply)
+{
+    // no error received?
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        // read data from QNetworkReply here
+        QByteArray bytes = reply->readAll();  // bytes
+        QString string(bytes); // string
+
+        QStringList wew = string.split("\"");
+        m_content->translatedText->append(wew.at(1));
+    }
+    else
+    {
+        m_content->translatedText->append("Failed to translate...");
+    }
+
+    progressValue++;
+    progressBar->setValue(progressValue);
+    if (progressValue == progressBar->maximum())
+        progressBar->setValue(0);
+
+    reply->deleteLater();
+
+    //    QTimer *timer = new QTimer(this);
+    //    timer->setSingleShot(true);
+    //    timer->setInterval(100);
+    //    timer->start();
+    //    connect(timer, SIGNAL(timeout()), this, SLOT(startTranslate()) );
+}
+
+void Tarjeem::showDownloadProgress(qint64 byteReceived, qint64 byteTotal)
+{
+    //    progressBar->setRange(0, byteTotal);
+}
+
+void Tarjeem::openSettings()
+{
+    m_settings = new Settings();
+    m_settings->show();
 }

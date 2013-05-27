@@ -14,8 +14,10 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QMenu>
+#include <QNetworkReply>
 
 #include "content.h"
+#include "settings.h"
 
 class Tarjeem : public QMainWindow
 {
@@ -30,9 +32,14 @@ public slots:
     void openHelp();
     void onOpenBook();
     void onItemClicked(QTreeWidgetItem* item);
+    void onTranslate();
 
     void showNavigation(bool state);
     void showTranslation(bool state);
+    void translateFinished(QNetworkReply*);
+    void startTranslate();
+    void showDownloadProgress(qint64 byteReceived, qint64 byteTotal);
+    void openSettings();
 
 private:
     void createMenu();
@@ -57,9 +64,11 @@ private:
 
     QDockWidget  *dock;
     Content      *m_content;
+    Settings     *m_settings;
 
     int bookId;
 
+    int progressValue;
 };
 
 #endif

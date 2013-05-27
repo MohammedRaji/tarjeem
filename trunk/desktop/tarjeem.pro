@@ -7,7 +7,9 @@ RESOURCES = $$PWD/resources/tarjeem.qrc
 
 SOURCES +=  main.cpp \
             tarjeem.cpp \
-            content.cpp
+            content.cpp \
+            settings.cpp
 
 HEADERS  += tarjeem.h \
-            content.h
+            content.h \
+            settings.h
