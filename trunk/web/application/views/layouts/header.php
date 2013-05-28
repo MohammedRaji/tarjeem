@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <head>
     <link href="<?php echo base_url(); ?>assets/css/bootstrap.css" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>assets/css/custom.css" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>assets/css/flat-ui.css" rel="stylesheet">
     <title><?= $title ?></title>
 </head>
 
 <!-- Menu -->
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
             <ul class="nav pull-right">

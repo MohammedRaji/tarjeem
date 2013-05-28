@@ -1,4 +1,4 @@
-<div class="container" style="border: 1px solid #eee; border-radius: 6px;">
+<div class="container" style="border: 2px solid #cbd3db; border-radius: 6px;">
     <div class="offset1">
         <h2>Sign in to Tarjeem</h2>
         <form action="<?= base_url('logins/validate') ?>" onsubmit="return formSubmit()" method="post" id="login_form">
