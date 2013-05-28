@@ -9,7 +9,7 @@
  * @link http://waldir.org/
  * */
 class Logins extends MY_Controller {
-
+   
     function __construct() {
         parent::__construct();
 
@@ -27,18 +27,11 @@ class Logins extends MY_Controller {
 
     public function login() {
         $data['title'] = "Login";
-        $data['content'] = 'layouts/login';
-        $data['login'] = $this->set_login_status();
-        $this->load->view($this->layout, $data);
-    }    
-
-    public function signup() {
-        $data['title'] = "Sign Up";
-        $data['content'] = 'layouts/signup';
-        $data['login'] = $this->set_login_status();
+        $data['content'] = 'contents/login';        
+        $data['user'] = $this->get_login_info();
         $this->load->view($this->layout, $data);
     }
-    
+
     function private_page() {
         // if user tries to direct access it will be sent to index
         $this->login->on_invalid_session('login');
@@ -50,7 +43,6 @@ class Logins extends MY_Controller {
         // Receives the login data
         $login = $this->input->post('login');
         $password = $this->input->post('password');
-
         /*
          * Validates the user input
          * The user->login returns true on success or false on fail.
@@ -59,8 +51,8 @@ class Logins extends MY_Controller {
         if ($this->login->login($login, $password)) {
             //get user alias, if any.. hmmm for now by default always have alias 
             //at minimum alias name is the same as ID
-            $alias_name = $this->user_alias->find_alias_name($this->login->get_id());
-            redirect(base_url('user/' . $alias_name));
+//            $user = $this->user->find_alias_name($this->login->get_id());
+            redirect(base_url(''));
         } else {
             // Oh, holdon sir.
             $this->session->set_flashdata('error_message', 'Invalid login or password.');
@@ -76,6 +68,20 @@ class Logins extends MY_Controller {
         // Bye, thanks! :)
         $this->session->set_flashdata('success_message', 'You are now logged out.');
         redirect(base_url(''));
+    }
+
+    function retry() {
+        $data['title'] = "Login";
+        $data['content'] = 'contents/login_error';
+        $data['user'] = $this->get_login_info();
+        $this->load->view($this->layout, $data);
+    }
+    
+    function reset_password(){
+        $data['title'] = "Reset Password";
+        $data['content'] = 'contents/reset_password';
+        $data['user'] = $this->get_login_info();
+        $this->load->view($this->layout,$data);
     }
 
 }
