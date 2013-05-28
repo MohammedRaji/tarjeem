@@ -9,8 +9,8 @@ class Homes extends MY_Controller {
 
     public function index() {
         $data['title'] = "Home";
-        $data['content'] = 'layouts/home';
-        $data['login'] = $this->set_login_status();
+        $data['content'] = 'contents/home';
+        $data['user'] = $this->get_login_info();
         $this->load->view($this->layout, $data);
     }
     

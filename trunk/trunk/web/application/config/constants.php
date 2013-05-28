@@ -36,6 +36,15 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
-
+//MAIL (this setting is for GMAIL smtp)
+define('MAIL_HOST',     'smtp.gmail.com');
+define('MAIL_PORT',     465);
+define('MAIL_AUTH',     TRUE);
+define('MAIL_SECURE',   'ssl');
+define('MAIL_USERNAME', 'yansyaf@gmail.com');
+define('MAIL_PASSWORD', 'muhammad040685');
+define('MAIL_FROM',     'noreply-register@tarjeem.com');
+define('MAIL_FROMNAME', 'Tarjeem Team');
+define('MAIL_WORDWRAP', 65);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

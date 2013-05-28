@@ -41,9 +41,15 @@
 $route['default_controller'] = "homes";
 $route['404_override'] = '';
 
-$route['login']  = "logins/login";
-$route['logout'] = "logins/logout";
-$route['signup'] = "logins/signup";
+$route['login']         = "logins/login";
+$route['login/(:any)']  = "logins/retry";
+$route['logout']        = "logins/logout";
+
+$route['signup']         = "signups";
+$route['signup/(:any)']  = "signups/retry/$1";
+$route['signup_success'] = "signups/success";
+
+$route['user/(:any)']  = "users/show/$1";
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
