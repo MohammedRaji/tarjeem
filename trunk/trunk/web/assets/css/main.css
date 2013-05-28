@@ -1,0 +1,162 @@
+/**********************************************
+ * General Style
+ **********************************************/
+@font-face {
+    font-family: Gisha;
+    src: url("gisha.ttf");
+}
+
+@font-face {
+    font-family: GishaBold;
+    src: url("gishabd.ttf");
+}
+
+p { 
+    font-family: Gisha;
+    font-size: 0.8em;
+}
+
+body {
+    color: black;
+    background-color: #ffffff
+/*    background-color: rgb(247,247,242); */
+}
+
+.hide {
+   position: absolute !important;
+   top: -9999px !important;
+   left: -9999px !important;
+}
+
+img.center-image {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.label-toolbar {
+    display:inline-block;
+    /*background-color:#ddd;*/
+    padding:4px 11px;
+    font-family:Arial;
+    font-size: 0.95em;
+	font-family: Gisha;
+	color: rgb(117,197,240); 
+}
+
+.label-toolbar a {text-decoration:none;  margin: 4px;  padding: 3px 10px 3px 10px; color: rgb(117,197,240); }
+.label-toolbar a:hover {color: white; }
+.label-toolbar a:active {text-decoration:underline; color: white;}
+
+.radio-toolbar input[type="radio"] {
+    display:none;
+}
+
+.radio-toolbar label {
+    display:inline-block;
+    /*background-color:#ddd;*/
+    padding:4px 11px;
+    font-family:Arial;
+    font-size: 0.95em;
+	font-family: Gisha;
+	color: rgb(117,197,240); 
+}
+
+.radio-toolbar input[type="radio"]:hover + label {
+	color: white; 
+}
+
+.radio-toolbar input[type="radio"]:checked + label {
+    /*background-color:#bbb;*/
+	color: white;
+	text-decoration:underline;
+}
+
+.fsSubmitButton
+{
+	border-top:		1px solid #a3ceda;
+	border-left:		1px solid #a3ceda;
+	border-right:		1px solid #4f6267;
+	border-bottom:		1px solid #4f6267;
+	padding:		3px 10px !important;
+	background-color:	rgb(59,89,152);
+	font-family: Gisha; 
+	font-size: 0.9em;	
+	color:			white;
+}
+
+#header-container {
+	background-color: rgb(59,89,152);
+	height: 67px;
+	bottom: 20px;
+}
+
+#header-logo {
+	float: left;
+}
+
+/*#header-navmenu {position:absolute; top:40px; left:700px; }*/
+#header-navmenu {float:right; top:100px; text-align: right; }
+#header-navmenu ul {font-family: Gisha; font-size: 0.8em; color: white;}
+#header-navmenu ul {margin: 0; padding: 40px 0 0 0 ; list-style-type: none; list-style-image: none; }
+#header-navmenu li {display: inline; }
+#header-navmenu ul li a {text-decoration:none;  margin: 4px;  padding: 3px 10px 3px 10px; color: white; }
+#header-navmenu ul li a:hover {text-decoration:underline; }
+
+#searchbar {
+	padding: 10px 0px 10px 0px; 
+	margin-left: auto;
+    margin-right: auto;
+}
+
+input.search {  
+	background: url("../images/search_icon.png") left no-repeat;
+	color: black;  
+	padding: 4px 4px 4px 34px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb(59,89,152);
+	height: 19px;
+	width: 981px;
+	font-family: Gisha; 
+	font-size: 0.9em;
+	display: block;
+	margin-left: auto;
+    margin-right: auto;	
+}
+
+#footer {
+	text-align:center;
+    font-size: 0.75em;
+}
+
+/**********************************************
+ * Login
+ **********************************************/
+#login-container
+{
+	padding: 100px 0px 100px 0px;
+}
+
+#login-box
+{
+	width: 746px;
+	height: 279px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: rgb(59,89,152);
+	margin-left: auto;
+    margin-right: auto;		
+	border-radius: 10px;
+	-moz-border-radius: 10px; /* Firefox 3.6 and earlier */
+} 
+
+/**********************************************
+ * About
+ **********************************************/
+#about-box{
+	background-image:url('../images/about_bg.png'); 
+	width: 1024px; 
+	margin-left: auto; 
+	margin-right: auto;
+}

@@ -1,0 +1,286 @@
+/**********************************************
+ * Common USER control
+ **********************************************/
+#user-option {
+	font-family: Gisha; 
+	font-size: 1em;
+	background-color: rgb(56,52,49);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 31px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+#user-option ul {margin: 0; padding: 0; list-style-type: none; list-style-image: none;}
+#user-option li {display: inline; }
+#user-option ul li a {text-decoration:none;  margin: 4px;  padding: 3px 10px 3px 10px; color: rgb(117,197,240); }
+#user-option ul li a:hover {text-decoration:underline; }
+#user-option ul li a:active {text-decoration:underline; color: white;}
+
+#user-box {
+	width: 979px;
+	height: 320px;
+	margin-left: auto;
+    margin-right: auto;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb(59,89,152);
+	overflow:scroll;
+	overflow-x: hidden;
+}
+
+#user-box-content {
+	background-color: white;
+    font-family: Gisha;
+	font-size: 0.9em;
+	padding: 10px 10px 10px 10px; 	
+}
+
+#user-box-content-container {
+}
+
+#user-box-content-icon {
+	float: left;	
+	padding: 20px 20px 20px 20px; 	
+}
+
+#user-box-content-text {
+	padding: 15px 5px 15px 5px; 	
+}
+
+/**********************************************
+ * Common CATEGORY/SUBCATEGORY/TOPICS control
+ **********************************************/
+#category-option {
+	font-family: Gisha; 
+	font-size: 1em;
+	background-color: rgb(56,52,49);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 31px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+/*#category-option ul {margin: 0; padding: 0; list-style-type: none; list-style-image: none;}
+#category-option li {display: inline; }
+#category-option ul li a {text-decoration:none;  margin: 4px;  padding: 3px 10px 3px 10px; color: rgb(117,197,240); }
+#category-option ul li a:hover {text-decoration:underline; }
+#category-option ul li a:active {text-decoration:underline; color: white;}
+*/
+#subcategory-initial {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#subcategory-professional {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#subcategory-kuliah {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#subcategory-sma {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#subcategory-smp {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#subcategory-sd {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#subcategory-hobby {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#subcategory-other {
+	font-family: Gisha; 
+	font-size: 0.9em;
+	background-color: rgb(96,93,92);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 62px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#rating-option {
+	font-family: Gisha; 
+	font-size: 1em;
+	background-color: rgb(56,52,49);
+	color: rgb(117,197,240);
+	width: 981px;
+	height: 31px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+
+#checkboxes-option {
+	font-family: Gisha; 
+	font-size: 0.95em;
+	background-color: rgb(222,222,221);
+	color: black;
+	width: 981px;
+	height: 31px;
+	margin-left: auto;
+    margin-right: auto;
+	line-height: 30px;
+}
+#checkboxes-option ul {margin: 0; padding: 0; list-style-type: none; list-style-image: none;}
+#checkboxes-option li {display: inline; }
+#checkboxes-option ul li a {text-decoration:none;  margin: 4px;  padding: 3px 10px 3px 10px; color: rgb(117,197,240); }
+#checkboxes-option ul li a:hover {text-decoration:underline; }
+#checkboxes-option ul li a:active {text-decoration:underline; color: white;}
+
+#category-box {
+	width: 979px;
+	height: 620px;
+	margin-left: auto;
+    margin-right: auto;
+	border-style: solid;
+	border-width: 0px;
+	border-color: rgb(59,89,152);
+/*	overflow:scroll;
+	overflow-x: hidden;*/
+}
+
+#category-box-content {
+	height: 800px;
+	width: 900px;
+	background-color: white;
+    font-family: Gisha;
+	font-size: 0.9em;
+/*	padding: 10px 10px 10px 10px;*/
+	text-align: center;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+#category-box-content-container {
+}
+
+#category-box-content-icon {
+	float: left;	
+	width: 180px;
+	height: 250px;
+/*	padding: 20px 20px 20px 20px; 	*/
+}
+
+#category-box-content-icon img:hover {
+	zoom: 1;
+	filter: alpha(opacity=50);
+	opacity: 0.5;
+}
+
+#category-box-content-text {
+	padding: 15px 5px 15px 5px; 	
+}
+
+/**********************************************
+ * Home page
+ **********************************************/
+#home-container {
+	background-color: white;
+	overflow:hidden;
+	padding: 80px 0px 80px 0px; /* vertical padding */
+	width: 981px;
+	margin-left: auto;
+    margin-right: auto;		
+}
+
+#home-video {
+	background-color: white;
+	float:left;
+	padding: 10px 20px 0px 80px;
+	margin-left: auto;
+    margin-right: auto;	
+}
+
+#home-list-container
+{
+	background-color: white;
+	float:left;
+	padding: 0px 20px 0px 20px;	
+}
+	
+#home-list ul
+{
+	background-color: white;
+    font-family: GishaBold;
+	font-size: 0.9em;
+	float:left;
+	line-height: 2em;
+	list-style-image:url("../images/list.gif");
+}
+
+#home-list-learnmore {
+	background-color: white;	
+	padding: 0px 30px 0px 40px;	
+    font-family: GishaBold;
+	font-size: 0.9em;
+	color: rgb(59,89,152);
+}
+#home-list-learnmore a {text-decoration:none; color: rgb(59,89,152);}
+#home-list-learnmore a:hover {text-decoration:underline; }

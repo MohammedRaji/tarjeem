@@ -1,7 +1,7 @@
 <script>
     var baseUrl = '<?= base_url() ?>';
 </script>
-<div class="container" style="border: 1px solid #eee; border-radius: 6px;">
+<div class="container" style="border: 2px solid #cbd3db; border-radius: 6px;">
     <div class="offset1">
         <h2><?= $title ?></h2>
         <form action="<?= base_url('signups/reset_handler') ?>" onsubmit="return formSubmit()" method="post" id="reset_form">
